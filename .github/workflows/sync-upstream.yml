@@ -1,0 +1,25 @@
+name: Sincronizar com o repositório original
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sincronizar a branch main com ctresb/leis
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method POST \
+            /repos/${{ github.repository }}/merge-upstream \
+            -f branch=main
